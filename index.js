@@ -30,7 +30,8 @@ var orderedActions = [
   'show',
   'edit',
   'update',
-  'destroy'
+  'destroy',
+  'query'
 ];
 
 /**
@@ -76,6 +77,9 @@ function httpMethod(self, method, base) {
     if(self.before && action in self.before) {
       before = self.before[action];
     }
+
+    if (self.version)
+        path = '/' + self.version + path;
     
     self._map(method, path, before, callback)
       ._record(action, method, path);
@@ -91,16 +95,18 @@ function httpMethod(self, method, base) {
  * @param {Server} app
  */
 
-var Resource = module.exports = function Resource(app, name, options) {
+function Resource(app, name, options) {
   this.app = app;
   this.before = options.before;
   this.name = options.name || name;
   this.root = options.root || false;
   this.base = this._base();
-  
+  this.version = options.version;
+
   this.id = options.id || this._defaultId();
   
   var self = this, member = {}, collection = {};
+
   HTTPMethods.forEach(function(method) {
     member[method] = httpMethod(self, method, 'show');
     collection[method] = httpMethod(self, method, 'index');
@@ -108,6 +114,7 @@ var Resource = module.exports = function Resource(app, name, options) {
   
   this.member = member;
   this.collection = collection;
+
   this.routes = [];
 };
 
@@ -148,14 +155,19 @@ $(Resource.prototype, {
         case 'destroy':
           method = 'delete';
           break;
+        case 'query':
+          method = 'post';
       }
       
       path += '.:format?';
-      
+
       if(self.before && action in self.before) {
         before = [].concat(self.before[action]);
       }
       
+      if (self.version)
+        path = '/' + self.version + path;
+
       self._map(method, path, before, callback)
         ._record(action, method, path);
     });
@@ -197,6 +209,7 @@ $(Resource.prototype, {
   
   _record: function(action, method, path) {
     method = method.toUpperCase();
+
     this.routes.push({
       action: action,
       method: method,
@@ -268,12 +281,13 @@ $(Resource.prototype, {
         result += '?/:op?';
         break;
       case 'new':
+      case 'query':
       case 'edit':
         if(!/\/$/.test(result))
           result += '/';
         result += action;
     }
-    
+
     return result;
   },
   
@@ -314,12 +328,14 @@ var methods = {
    * @return {Object}
    */
   
-  _load: function(name) {
+  _load: function(name, version) {
     this._loaded = this._loaded || {};
     
     if(!(name in this._loaded)) {
-      var dir = this.settings.controllers;
-      this._loaded[name] = require(path.join(dir, name));
+      var appDir = this.settings.app_dir; // /app
+      var versionDir = path.join(appDir, version); // /app/v1
+      var controllers = path.join(versionDir, 'controllers'); // /app/v1/controllers
+      this._loaded[name] = require(path.join(controllers, name));
     }
     
     return this._loaded[name];
@@ -354,32 +370,24 @@ var methods = {
   resource: function(name, options, callback) {
     if('function' == typeof options)
       callback = options, options = {};
-    
+
     this._trail = this._trail || [];
     this.resources = this.resources || {};
-    var controller = this._load(name);
+    var controller = this._load(name, options.version);
     var resource = new Resource(this, name, $({}, controller.options, options));
-    
+
     this.addResource(resource);
     
     resource._init(controller);
     if('function' == typeof callback) {
       resource._nest(callback);
     }
-    
     return resource;
   }
 };
 
-// Load `methods` onto the server prototypes
-// Express 2.x
-if (express.HTTPServer) {
-  $(express.HTTPServer.prototype, methods);
-}
-if (express.HTTPSServer) {
-  $(express.HTTPSServer.prototype, methods);
-}
-// Express 3.x
-if (express.application) {
-  $(express.application, methods);
+module.exports = function (app) {
+  $(app, methods);
+
+  return Resource;
 }

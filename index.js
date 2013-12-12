@@ -15,7 +15,8 @@
 var express = require('express'),
     path = require('path'),
     lingo = require('lingo'),
-    HTTPMethods = require('methods').concat('del');
+    HTTPMethods = require('methods').concat('del')
+    _ = require('lodash');
 
 /**
  * Pre-defined action ordering.
@@ -23,7 +24,6 @@ var express = require('express'),
  */
 
 var orderedActions = [
-  'all',
   'index',
   'new',
   'create',
@@ -135,12 +135,9 @@ $(Resource.prototype, {
       if(!(action in self.actions)) return;
       var path = self.path(action),
           callback = self.actions[action],
-          method, before;
+          method, before = [];
       
       switch(action) {
-        case 'all':
-          self.app.all(path, callback);
-          return;
         case 'index':
         case 'show':
         case 'new':
@@ -166,10 +163,15 @@ $(Resource.prototype, {
       
       path += '.:format?';
 
-      if(self.before && action in self.before) {
-        before = [].concat(self.before[action]);
+      if (self.before && self.before['all']) {
+        before.push(self.before['all']);
+      }
+      if (self.before && action in self.before) {
+        before.push(self.before[action]);
       }
       
+      before = _.flatten(before);
+
       if (self.version)
         path = '/' + self.version + path;
 
@@ -268,10 +270,10 @@ $(Resource.prototype, {
    */
   
   path: function(action) {
+
     var result = this.base;
-    
+
     switch(action) {
-      case 'all':
       case 'show':
       case 'edit':
       case 'update':
@@ -282,9 +284,6 @@ $(Resource.prototype, {
     }
     
     switch(action) {
-      case 'all':
-        result += '?/:op?';
-        break;
       case 'new':
       case 'query':
       case 'edit':

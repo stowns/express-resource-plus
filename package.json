@@ -7,9 +7,10 @@
     "url": "https://github.com/tpeden/express-resource-new"
   },
   "author": "TJ Peden <tj.peden@tj-coding.com>",
-  "dependencies": { 
+  "dependencies": {
     "lingo": ">=0.0.4",
-    "methods": "0.0.1"
+    "methods": "0.0.1",
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "connect": "*",
@@ -17,9 +18,16 @@
     "mocha": "*",
     "should": "*"
   },
-  "keywords": ["express", "rest", "resource", "resources"],
+  "keywords": [
+    "express",
+    "rest",
+    "resource",
+    "resources"
+  ],
   "main": "index",
-  "engines": { "node": ">= 0.2.0" },
+  "engines": {
+    "node": ">= 0.2.0"
+  },
   "scripts": {
     "test": "mocha"
   }

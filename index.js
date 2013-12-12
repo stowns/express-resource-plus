@@ -31,7 +31,8 @@ var orderedActions = [
   'edit',
   'update',
   'destroy',
-  'query'
+  'query',
+  'describe'
 ];
 
 /**
@@ -157,6 +158,10 @@ $(Resource.prototype, {
           break;
         case 'query':
           method = 'post';
+          break;
+        case 'describe':
+          method = 'head'
+          break;
       }
       
       path += '.:format?';

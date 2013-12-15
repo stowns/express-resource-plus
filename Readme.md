@@ -1,71 +1,32 @@
-[![build status](https://secure.travis-ci.org/tpeden/express-resource-new.png)](http://travis-ci.org/tpeden/express-resource-new)
-# Express Resource (new)
+# Unified Sequel Resource
 
-express-resouce-new provides resourceful routing to express with improved nesting and auto-require.
+Sequelize Resource is a fork of [express-resource new](https://github.com/tpeden/express-resource-new), customized to meet the needs of our api-starter project.
 
 ## Installation
 
 npm:
-
-    $ npm install express-resource-new
+    $ npm install unified-sequel-resource
 
 ## Usage
 
 In your main application file (i.e. app.js or server.js) just add the following:
 
     var express = require('express'),
-        Resource = require('express-resource-new'), // <- Add this (Resource really isn't needed)
+        Resource = require('unified-sequel-resource'), // <- Add this (Resource really isn't needed)
         app = express.createServer();
     
     app.configure(function(){
-      app.set('views', __dirname + '/views');
-      // Add the following to your configure block (you can use any path you want)
-      app.set('controllers', __dirname + '/controllers');
+      // it is important to note that /app directory layout must follow a specific pattern to work properly see [App Layout](#app-layout)
+      app.set('app_dir', __dirname + '/app');
       /* ... */
     });
 
-Now in the `./controllers` directory you can put your "controllers" with one or more of the supported actions as follows:
+### App Layout
+  /app/:version/controllers/:controller_name/index.js
+                routes.js
 
-`./controllers/articles/index.js`:
 
-    module.exports = {
-      index: function(request, response) {
-        response.send('articles index');
-      },
-      show: function(request, response) {
-        response.send('show article ' + request.params.article);
-      },
-      new: function(request, response) {
-        response.send('new article');
-      },
-      create: function(request, response) {
-        response.send('create article');
-      },
-      edit: function(request, response) {
-        response.send('edit article ' + request.params.article);
-      },
-      update: function(request, response) {
-        response.send('update article ' + request.params.article);
-      },
-      destroy: function(request, response) {
-        response.send('delete article ' + request.params.article);
-      }
-    };
-
-express-resource-new also supports a special action, `all`, that gets called for all other actions in the resource.
-
-    module.exports = {
-      all: function(request, response, next) {
-        // do some preloading or user authentication here
-        next();
-      },
-      index: function(request, response) {
-        response.send('articles index');
-      },
-      /* ... */
-    };
-
-"What if I want to create a resource on the root path or change the id variable name or define middleware on specific actions?" express-resource-new handles that by allowing you to set an `options` property on the controller object like so:
+"What if I want to create a resource on the root path or change the id variable name or define middleware on specific actions?" unified-sequel-resource handles that by allowing you to set an `options` property on the controller object like so:
 
     module.exports = {
       options: {
@@ -86,18 +47,8 @@ express-resource-new also supports a special action, `all`, that gets called for
 
 Lastly just call `app.resource()` with your controller name. Nesting is done by passing a function that can call `app.resource()` for each nested resource. Options can also be passed as the second parameter which override the options set in the controller itself.
 
-    var express = require('express'),
-        Resource = require('express-resource-new'),
-        app = express.createServer();
-    
-    app.configure(function(){
-      app.set('views', __dirname + '/views');
-      app.set('controllers', __dirname + '/controllers');
-      /* ... */
-    });
-    
-    app.resource('articles', function() {
-      app.resource('comments', { id: 'id' }); // You can also call `this.resource('comments')`
+    app.resource('articles', { version : 'v1'} function() {
+      app.resource('comments', { version : 'v1', id: 'id' }); // You can also call `this.resource('comments')`
     });
 
 You can also create non-standard RESTful routes.
@@ -138,7 +89,10 @@ Actions are, by default, mapped as shown below. These routs provide `req.params.
     show    GET     /articles/:article.:format?
     edit    GET     /articles/:article/edit.:format?
     update  PUT     /articles/:article.:format?
+    update  PUT     /articles.:format?  ( { where : { username : 'Steve' } })
     destroy DELETE  /articles/:article.:format?
+    destroy DELETE  /articles.:format?  ( { where : { username : 'Steve' } })
+    query   POST    /articles/query.:format?  ( { where : { username : 'Steve' } })
 
     article_comments:
     index   GET     /articles/:article/comments.:format?
@@ -147,21 +101,20 @@ Actions are, by default, mapped as shown below. These routs provide `req.params.
     show    GET     /articles/:article/comments/:comment.:format?
     edit    GET     /articles/:article/comments/:comment/edit.:format?
     update  PUT     /articles/:article/comments/:comment.:format?
+    update  PUT     /articles/:article/comments.:format?  ( { where : { username : 'Steve' } })
     destroy DELETE  /articles/:article/comments/:comment.:format?
+    destroy DELETE  /articles/:article/comments.:format?  ( { where : { username : 'Steve' } })
+    query   POST    /articles/:article/comments/query.:format?  ( { where : { username : 'Steve' } })
 
 ## Content Negotiation
 
 Content negotiation is currently only provided through the `req.params.format` property, allowing you to respond accordingly.
 
-## Contributing
-
-Patches are welcome, fork away! :-)
-
 ## License
 
     The MIT License
 
-    Copyright (c) 2012 TJ Peden <tj.peden@tj-coding.com>
+    Copyright (c) 2013 Simon Townsend <stownsend@unifiedsocial.com>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the

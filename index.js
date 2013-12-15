@@ -18,6 +18,7 @@ var express = require('express'),
     HTTPMethods = require('methods').concat('del')
     _ = require('lodash');
 
+_.str = require('underscore.string');
 /**
  * Pre-defined action ordering.
  * As in express-resource.
@@ -34,6 +35,11 @@ var orderedActions = [
   'query',
   'describe'
 ];
+
+var additionalWhereSupport = [
+  'update',
+  'destroy'
+]
 
 /**
  * Extend function.
@@ -174,6 +180,20 @@ $(Resource.prototype, {
 
       if (self.version)
         path = '/' + self.version + path;
+
+      console.log(path);
+
+      // support for routes that don't require the :id url_param to identify the resource
+      // ie) PUT /users { where : { name : 'steve' } } instead of PUT /users/:user_id
+      if (_.contains(additionalWhereSupport, action)) {
+        // /users/:id
+        var wherePath = _.str.strLeftBack(path, '/');
+        // /users
+        wherePath += '.:format?'
+        // /users.:format?
+        self._map(method, wherePath, before, callback)
+          ._record(action, method, wherePath);
+      } 
 
       self._map(method, path, before, callback)
         ._record(action, method, path);

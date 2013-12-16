@@ -1,6 +1,6 @@
 # Express Resource Plus
 
-Sequelize Express Resource is a fork of [express-resource new](https://github.com/tpeden/express-resource-new) providing a few more routes, refactors and an extra feature or two.
+Express Resource Plus is a fork of [express-resource new](https://github.com/tpeden/express-resource-new) providing a few more routes, refactors and an extra feature or two.
 
 ## Installation
 

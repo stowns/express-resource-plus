@@ -1,18 +1,18 @@
-# Unified Sequel Resource
+# Express Resource Plus
 
-Sequelize Resource is a fork of [express-resource new](https://github.com/tpeden/express-resource-new), customized to meet the needs of our api-starter project.
+Sequelize Express Resource is a fork of [express-resource new](https://github.com/tpeden/express-resource-new) providing a few more routes, refactors and an extra feature or two.
 
 ## Installation
 
 npm:
-    $ npm install unified-sequel-resource
+    $ npm install express-resource-plus
 
 ## Usage
 
 In your main application file (i.e. app.js or server.js) just add the following:
 
     var express = require('express'),
-        Resource = require('unified-sequel-resource'), // <- Add this (Resource really isn't needed)
+        Resource = require('express-resource-plus'), // <- Add this (Resource really isn't needed)
         app = express.createServer();
     
     app.configure(function(){
@@ -26,7 +26,7 @@ In your main application file (i.e. app.js or server.js) just add the following:
                 routes.js
 
 
-"What if I want to create a resource on the root path or change the id variable name or define middleware on specific actions?" unified-sequel-resource handles that by allowing you to set an `options` property on the controller object like so:
+"What if I want to create a resource on the root path or change the id variable name or define middleware on specific actions?" express-resource-plus handles that by allowing you to set an `options` property on the controller object like so:
 
     module.exports = {
       options: {
@@ -114,7 +114,7 @@ Content negotiation is currently only provided through the `req.params.format` p
 
     The MIT License
 
-    Copyright (c) 2013 Simon Townsend <stownsend@unifiedsocial.com>
+    Copyright (c) 2013 Simon Townsend <stowns3@gmail.com>
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the

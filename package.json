@@ -1,33 +1,29 @@
 {
-  "name": "express-resource-new",
-  "description": "An enhancement to express-resource",
+  "name": "express-resource-plus",
+  "description": "Provides RESTful routes for resources.",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tpeden/express-resource-new"
+    "url": "https://github.com/stowns/express-resource-plus"
   },
-  "author": "TJ Peden <tj.peden@tj-coding.com>",
+  "author": "Simon Townsend stowns3@gmail.com",
   "dependencies": {
     "lingo": ">=0.0.4",
     "methods": "0.0.1",
     "lodash": "~2.4.1",
-    "underscore.string": "~2.3.3"
-  },
-  "devDependencies": {
-    "connect": "*",
-    "express": "3.x",
-    "mocha": "*",
-    "should": "*"
+    "underscore.string": "~2.3.3",
+    "express": "3.x"
   },
   "keywords": [
     "express",
     "rest",
     "resource",
-    "resources"
+    "resources",
+    "nested"
   ],
   "main": "index",
   "engines": {
-    "node": ">= 0.2.0"
+    "node": ">= 0.8.0"
   },
   "scripts": {
     "test": "mocha"

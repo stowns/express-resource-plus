@@ -181,7 +181,6 @@ $(Resource.prototype, {
       if (self.version)
         path = '/' + self.version + path;
 
-      console.log(path);
 
       // support for routes that don't require the :id url_param to identify the resource
       // ie) PUT /users { where : { name : 'steve' } } instead of PUT /users/:user_id

@@ -83,16 +83,17 @@ You can also create non-standard RESTful routes.
 Actions are, by default, mapped as shown below. These routs provide `req.params.article` for the substring where ":article" is and, in the case of the nested routes, `req.params.comment` for the substring where ":comment" is as shown below:
 
     articles:
-    index   GET     /articles.:format?
-    new     GET     /articles/new.:format?
-    create  POST    /articles.:format?
-    show    GET     /articles/:article.:format?
-    edit    GET     /articles/:article/edit.:format?
-    update  PUT     /articles/:article.:format?
-    update  PUT     /articles.:format?  ( { where : { username : 'Steve' } })
-    destroy DELETE  /articles/:article.:format?
-    destroy DELETE  /articles.:format?  ( { where : { username : 'Steve' } })
-    query   POST    /articles/query.:format?  ( { where : { username : 'Steve' } })
+    index    GET     /articles.:format?
+    new      GET     /articles/new.:format?
+    create   POST    /articles.:format?
+    show     GET     /articles/:article.:format?
+    edit     GET     /articles/:article/edit.:format?
+    update   PUT     /articles/:article.:format?
+    update   PUT     /articles.:format?  ( { where : { username : 'Steve' } })
+    destroy  DELETE  /articles/:article.:format?
+    destroy  DELETE  /articles.:format?  ( { where : { username : 'Steve' } })
+    query    POST    /articles/query.:format?  ( { where : { username : 'Steve' } })
+    describe HEAD    /articles
 
     article_comments:
     index   GET     /articles/:article/comments.:format?

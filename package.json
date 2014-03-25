@@ -12,7 +12,7 @@
     "methods": "0.0.1",
     "lodash": "~2.4.1",
     "underscore.string": "~2.3.3",
-    "express": "3.x"
+    "express": ">=3.x"
   },
   "keywords": [
     "express",

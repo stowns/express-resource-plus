@@ -28,15 +28,26 @@ In your main application file (i.e. app.js or server.js) just add the following:
 
 "What if I want to create a resource on the root path or change the id variable name or define middleware on specific actions?" express-resource-plus handles that by allowing you to set an `options` property on the controller object like so:
 
+    var before = {
+      auth : function(req, res, next) {
+        // some auth logic
+        next();
+      },
+      owner : function(req, res, next) {
+        // resource owner logic
+        next();
+      }
+    }
+
     module.exports = {
       options: {
         root: true, // Creates resource on the root path (overrides name)
         name: 'posts', // Overrides module name (folder name)
         id: 'id', // Overrides the default id from singular form of `name`
         before: { // Middleware support
-          show: auth,
-          update: [auth, owner],
-          destroy: [auth, owner]
+          show: before.auth,
+          update: [before.auth, before.owner],
+          destroy: [before.auth, before.owner]
         }
       },
       index: function(request, response) {

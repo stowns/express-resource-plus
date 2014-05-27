@@ -2,6 +2,8 @@
 
 Express Resource Plus is a fork of [express-resource new](https://github.com/tpeden/express-resource-new) providing a few more routes, refactors and an extra feature or two.
 
+**** ONLY compatible with Express 4 ****
+
 ## Installation
 
 npm:

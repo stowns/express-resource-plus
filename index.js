@@ -76,17 +76,15 @@ function httpMethod(self, method, base) {
       }
     }
     
+    console.log('base: ' + base);
     var path = self.path(base), before;
     if(!/\/$/.test(path))
           path += '/';
     path += action + ".:format?";
-      
+    console.log('path: ' + path);
     if(self.before && action in self.before) {
       before = self.before[action];
     }
-
-    if (self.version)
-        path = '/' + self.version + path;
     
     self._map(method, path, before, callback)
       ._record(action, method, path);
@@ -99,11 +97,12 @@ function httpMethod(self, method, base) {
  * 
  * @param {String} name
  * @param {Object} actions
- * @param {Server} app
+ * @param {Server}.router
  */
 
-function Resource(app, name, options) {
-  this.app = app;
+function Resource(router, name, options) {
+  console.log('new resource');
+  this.router = router;
   this.before = options.before;
   this.name = options.name || name;
   this.root = options.root || false;
@@ -111,7 +110,7 @@ function Resource(app, name, options) {
   this.version = options.version;
 
   this.id = options.id || this._defaultId();
-  
+  console.log('id: ' +this.id);
   var self = this, member = {}, collection = {};
 
   HTTPMethods.forEach(function(method) {
@@ -168,7 +167,7 @@ $(Resource.prototype, {
       }
       
       path += '.:format?';
-
+      
       if (self.before && self.before['all']) {
         before.push(self.before['all']);
       }
@@ -177,10 +176,6 @@ $(Resource.prototype, {
       }
       
       before = _.flatten(before);
-
-      if (self.version)
-        path = '/' + self.version + path;
-
 
       // support for routes that don't require the :id url_param to identify the resource
       // ie) PUT /users { where : { name : 'steve' } } instead of PUT /users/:user_id
@@ -207,7 +202,7 @@ $(Resource.prototype, {
   
   _defaultId: function() {
     return this.root ?
-      'id' : lingo.en.singularize(this.name);
+      'id' : lingo.en.singularize(this.name) + 'Id';
   },
   
   /**
@@ -219,8 +214,8 @@ $(Resource.prototype, {
   _base: function() {
     var base;
     
-    if('_base' in this.app && this.app._base && this.app._base.length > 0) {
-      base = this.app._base + '/' + this.name;
+    if('_base' in this.router && this.router._base && this.router._base.length > 0) {
+      base = this.router._base + '/' + this.name;
     } else {
       base = '/' + (this.root ? '' : this.name);
     }
@@ -252,14 +247,14 @@ $(Resource.prototype, {
    */
   
   _nest: function(callback) {
-    var prev = this.app._base;
-    this.app._base = this.path('show');
-    this.app._trail.push(this.name);
+    var prev = this.router._base;
+    this.router._base = this.path('show');
+    this.router._trail.push(this.name);
     
     callback.apply(this);
     
-    this.app._base = prev || null;
-    this.app._trail.pop();
+    this.router._base = prev || null;
+    this.router._trail.pop();
   },
   
   /**
@@ -274,9 +269,9 @@ $(Resource.prototype, {
   
   _map: function(method, path, middleware, callback) {
     if(Array.isArray(middleware)) {
-      this.app[method].apply(this.app, [path].concat(middleware, callback));
+      this.router[method].apply(this.router, [path].concat(middleware, callback));
     } else {
-      this.app[method](path, callback);
+      this.router[method](path, callback);
     }
     return this;
   },
@@ -315,7 +310,7 @@ $(Resource.prototype, {
   },
   
   /**
-   * Alias for app.resource
+   * Alias for router.resource
    * 
    * @param {String} name
    * @param {Object} options
@@ -324,7 +319,7 @@ $(Resource.prototype, {
    */
   
   resource: function(name, options, callback) {
-    return this.app.resource(name, options, callback);
+    return this.router.resource(name, options, callback);
   },
   
   /**
@@ -342,27 +337,6 @@ $(Resource.prototype, {
 });
 
 var methods = {
-  
-  /**
-   * Requires modules from the `app.settings.controllers` path.
-   * This method uses caching so that multiple calls for the
-   * same controller don't require multiple calls to require.
-   * 
-   * @return {Object}
-   */
-  
-  _load: function(name, version) {
-    this._loaded = this._loaded || {};
-    
-    if(!(name in this._loaded)) {
-      var appDir = this.settings.app_dir; // /app
-      var versionDir = path.join(appDir, version); // /app/v1
-      var controllers = path.join(versionDir, 'controllers'); // /app/v1/controllers
-      this._loaded[name] = require(path.join(controllers, name));
-    }
-    
-    return this._loaded[name];
-  },
   
   /**
    * Saves all resources into a table. The name used
@@ -391,12 +365,13 @@ var methods = {
    */
   
   resource: function(name, options, callback) {
+    console.log('resource called');
     if('function' == typeof options)
       callback = options, options = {};
 
     this._trail = this._trail || [];
     this.resources = this.resources || {};
-    var controller = this._load(name, options.version);
+    var controller = options.controller;
     var resource = new Resource(this, name, $({}, controller.options, options));
 
     this.addResource(resource);
@@ -409,8 +384,8 @@ var methods = {
   }
 };
 
-module.exports = function (app) {
-  $(app, methods);
+module.exports = function (router) {
+  $(router, methods); // extend router
 
   return Resource;
 }

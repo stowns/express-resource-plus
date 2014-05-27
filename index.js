@@ -76,12 +76,11 @@ function httpMethod(self, method, base) {
       }
     }
     
-    console.log('base: ' + base);
     var path = self.path(base), before;
     if(!/\/$/.test(path))
           path += '/';
     path += action + ".:format?";
-    console.log('path: ' + path);
+
     if(self.before && action in self.before) {
       before = self.before[action];
     }
@@ -101,7 +100,6 @@ function httpMethod(self, method, base) {
  */
 
 function Resource(router, name, options) {
-  console.log('new resource');
   this.router = router;
   this.before = options.before;
   this.name = options.name || name;
@@ -110,7 +108,6 @@ function Resource(router, name, options) {
   this.version = options.version;
 
   this.id = options.id || this._defaultId();
-  console.log('id: ' +this.id);
   var self = this, member = {}, collection = {};
 
   HTTPMethods.forEach(function(method) {
@@ -365,7 +362,6 @@ var methods = {
    */
   
   resource: function(name, options, callback) {
-    console.log('resource called');
     if('function' == typeof options)
       callback = options, options = {};
 

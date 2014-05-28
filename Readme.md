@@ -60,8 +60,8 @@ In your main application file (i.e. app.js or server.js) just add the following:
 
 Lastly just call `app.resource()` with your controller name. Nesting is done by passing a function that can call `app.resource()` for each nested resource. Options can also be passed as the second parameter which override the options set in the controller itself.
 
-    app.resource('articles', { version : 'v1'} function() {
-      app.resource('comments', { version : 'v1', id: 'id' }); // You can also call `this.resource('comments')`
+    app.resource('articles', { controller : articles }, function() {
+      app.resource('comments', { controller : comments });
     });
 
 You can also create non-standard RESTful routes.
@@ -84,8 +84,8 @@ You can also create non-standard RESTful routes.
 `./app.js`:
 
     /* ... */
-    app.resource('articles', function() {
-      this.resource('comments', function() {
+    app.resource('articles', { controller : articles }, function() {
+      this.resource('comments', { controller : comments }, function() {
         this.collection.get('search');
         this.member.get('reply');
       });

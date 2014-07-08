@@ -99,26 +99,26 @@ Actions are, by default, mapped as shown below. These routs provide `req.params.
     index    GET     /articles.:format?
     new      GET     /articles/new.:format?
     create   POST    /articles.:format?
-    show     GET     /articles/:article.:format?
-    edit     GET     /articles/:article/edit.:format?
-    update   PUT     /articles/:article.:format?
+    show     GET     /articles/:articleId.:format?
+    edit     GET     /articles/:articleId/edit.:format?
+    update   PUT     /articles/:articleId.:format?
     update   PUT     /articles.:format?  ( { where : { username : 'Steve' } })
-    destroy  DELETE  /articles/:article.:format?
+    destroy  DELETE  /articles/:articleId.:format?
     destroy  DELETE  /articles.:format?  ( { where : { username : 'Steve' } })
     query    POST    /articles/query.:format?  ( { where : { username : 'Steve' } })
     describe HEAD    /articles
 
     article_comments:
-    index   GET     /articles/:article/comments.:format?
-    new     GET     /articles/:article/comments/new.:format?
-    create  POST    /articles/:article/comments.:format?
-    show    GET     /articles/:article/comments/:comment.:format?
-    edit    GET     /articles/:article/comments/:comment/edit.:format?
-    update  PUT     /articles/:article/comments/:comment.:format?
-    update  PUT     /articles/:article/comments.:format?  ( { where : { username : 'Steve' } })
-    destroy DELETE  /articles/:article/comments/:comment.:format?
-    destroy DELETE  /articles/:article/comments.:format?  ( { where : { username : 'Steve' } })
-    query   POST    /articles/:article/comments/query.:format?  ( { where : { username : 'Steve' } })
+    index   GET     /articles/:articleId/comments.:format?
+    new     GET     /articles/:articleId/comments/new.:format?
+    create  POST    /articles/:articleId/comments.:format?
+    show    GET     /articles/:articleId/comments/:commentId.:format?
+    edit    GET     /articles/:articleId/comments/:commentId/edit.:format?
+    update  PUT     /articles/:articleId/comments/:commentId.:format?
+    update  PUT     /articles/:articleId/comments.:format?  ( { where : { username : 'Steve' } })
+    destroy DELETE  /articles/:articleId/comments/:commentId.:format?
+    destroy DELETE  /articles/:articleId/comments.:format?  ( { where : { username : 'Steve' } })
+    query   POST    /articles/:articleId/comments/query.:format?  ( { where : { username : 'Steve' } })
 
 ## Content Negotiation
 
